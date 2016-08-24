@@ -137,7 +137,7 @@ export default class DropdownAlert extends Component {
   renderStatusBar(bgColor) {
     if (Platform.OS === 'android' || this.state.type != 'custom') {
       return (
-          <StatusBar barStyle="light-content" backgroundColor={bgColor} />
+          <StatusBar backgroundColor={bgColor} />
       )
     }
     return null
