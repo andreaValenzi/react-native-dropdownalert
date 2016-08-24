@@ -1,16 +1,16 @@
 
 import React, {Component, PropTypes} from 'react'
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  Animated,
-  Modal,
-  StatusBar,
-  Platform,
-  Dimensions,
-  Image
+    View,
+    Text,
+    StyleSheet,
+    TouchableHighlight,
+    Animated,
+    Modal,
+    StatusBar,
+    Platform,
+    Dimensions,
+    Image
 } from "react-native"
 
 var closeTimeoutId
@@ -20,6 +20,7 @@ const WINDOW = Dimensions.get('window')
 export default class DropdownAlert extends Component {
   static propTypes = {
     onClose: React.PropTypes.func,
+    onPressAlert: React.PropTypes.func,
     closeInterval: React.PropTypes.number,
     imageUri: React.PropTypes.string,
     imageSrc: React.PropTypes.number,
@@ -34,6 +35,7 @@ export default class DropdownAlert extends Component {
   }
   static defaultProps =  {
     onClose: null,
+    onPressAlert: null,
     closeInterval: 4000,
     imageUri: '',
     imageSrc: null,
@@ -89,13 +91,14 @@ export default class DropdownAlert extends Component {
     this.validateType = this.validateType.bind(this)
     this.renderStatusBar = this.renderStatusBar.bind(this)
     this.onLayoutEvent = this.onLayoutEvent.bind(this)
+    this.onPressAlert = this.onPressAlert.bind(this)
   }
   renderTitle() {
     if (this.state.title.length > 0) {
       return (
-        <Text style={this.props.titleStyle} numberOfLines={this.props.titleNumOfLines}>
-          {this.state.title}
-        </Text>
+          <Text style={this.props.titleStyle} numberOfLines={this.props.titleNumOfLines}>
+            {this.state.title}
+          </Text>
       )
     }
     return null
@@ -103,9 +106,9 @@ export default class DropdownAlert extends Component {
   renderMessage() {
     if (this.state.message.length > 0) {
       return (
-        <Text style={this.props.messageStyle} numberOfLines={this.props.messageNumOfLines}>
-          {this.state.message}
-        </Text>
+          <Text style={this.props.messageStyle} numberOfLines={this.props.messageNumOfLines}>
+            {this.state.message}
+          </Text>
       )
     }
     return null
@@ -121,11 +124,11 @@ export default class DropdownAlert extends Component {
         style['height'] = DEFAULT_IMAGE_DIMENSIONS
       }
       return (
-        <Image style={style} source={{uri: uri}} />
+          <Image style={style} source={{uri: uri}} />
       )
     } else if (src != null) {
       return (
-        <Image style={this.props.imageStyle} source={src} />
+          <Image style={this.props.imageStyle} source={src} />
       )
     } else {
       return null
@@ -134,7 +137,7 @@ export default class DropdownAlert extends Component {
   renderStatusBar(bgColor) {
     if (Platform.OS === 'android' || this.state.type != 'custom') {
       return (
-        <StatusBar barStyle="light-content" backgroundColor={bgColor} />
+          <StatusBar barStyle="light-content" backgroundColor={bgColor} />
       )
     }
     return null
@@ -167,19 +170,19 @@ export default class DropdownAlert extends Component {
       }
       return (
           <Animated.View style={{
-              transform: [{
-                translateY: this.state.fadeAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [this.state.startDelta, this.state.endDelta]
-                }),
-              }],
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0
-            }}>
+            transform: [{
+              translateY: this.state.fadeAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [this.state.startDelta, this.state.endDelta]
+              }),
+            }],
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0
+          }}>
             {this.renderStatusBar(statusBarBackgroundColor)}
-            <TouchableHighlight onPress={this.dismiss} underlayColor={'lightgray'} onLayout={(event) => this.onLayoutEvent(event)}>
+            <TouchableHighlight onPress={this.onPressAlert} underlayColor={'lightgray'} onLayout={(event) => this.onLayoutEvent(event)}>
               <View style={style}>
                 {this.renderImage(source)}
                 <View style={styles.textContainer}>
@@ -196,7 +199,7 @@ export default class DropdownAlert extends Component {
   }
   render() {
     return (
-      this.renderDropDown()
+        this.renderDropDown()
     )
   }
   onLayoutEvent(event) {
@@ -243,11 +246,17 @@ export default class DropdownAlert extends Component {
       })
     }
     this.animate(1)
-     if (this.props.closeInterval > 1) {
+    if (this.props.closeInterval > 1) {
       closeTimeoutId = setTimeout(function() {
         this.dismiss()
       }.bind(this), this.props.closeInterval)
     }
+  }
+  onPressAlert() {
+    if (this.props.onPressAlert) {
+      this.props.onPressAlert()
+    }
+    this.dismiss()
   }
   dismiss() {
     if (this.state.isOpen) {
@@ -274,10 +283,10 @@ export default class DropdownAlert extends Component {
   }
   animate(toValue) {
     Animated.timing(
-      this.state.fadeAnim, {
-        toValue: toValue,
-        duration: this.state.duration
-      }
+        this.state.fadeAnim, {
+          toValue: toValue,
+          duration: this.state.duration
+        }
     ).start()
   }
   validateType(type) {
