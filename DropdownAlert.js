@@ -10,7 +10,8 @@ import {
     StatusBar,
     Platform,
     Dimensions,
-    Image
+    Image,
+    ScrollView
 } from "react-native"
 
 var closeTimeoutId
@@ -181,16 +182,18 @@ export default class DropdownAlert extends Component {
             left: 0,
             right: 0
           }}>
-            {this.renderStatusBar(statusBarBackgroundColor)}
-            <TouchableHighlight onPress={this.onPressAlert} underlayColor={'lightgray'} onLayout={(event) => this.onLayoutEvent(event)}>
-              <View style={style}>
-                {this.renderImage(source)}
-                <View style={styles.textContainer}>
-                  {this.renderTitle()}
-                  {this.renderMessage()}
+            <ScrollView onScroll={this.dismiss}>
+              {this.renderStatusBar(statusBarBackgroundColor)}
+              <TouchableHighlight onPress={this.onPressAlert} underlayColor={'lightgray'} onLayout={(event) => this.onLayoutEvent(event)}>
+                <View style={style}>
+                  {this.renderImage(source)}
+                  <View style={styles.textContainer}>
+                    {this.renderTitle()}
+                    {this.renderMessage()}
+                  </View>
                 </View>
-              </View>
-            </TouchableHighlight>
+              </TouchableHighlight>
+            </ScrollView>
           </Animated.View>
       )
     } else {
